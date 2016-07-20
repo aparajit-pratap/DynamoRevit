@@ -295,6 +295,15 @@ namespace Revit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The reference direction cannot be perpendicular to the host Revit face.
+        /// </summary>
+        internal static string FamilyPlacementFailed_For_ReferenceDirection {
+            get {
+                return ResourceManager.GetString("FamilyPlacementFailed_For_ReferenceDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A FamilySymbol with the specified name does not exist in the document..
         /// </summary>
         internal static string FamilySymbolNotFound1 {

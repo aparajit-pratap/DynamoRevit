@@ -5,6 +5,7 @@ using Autodesk.Revit.DB;
 using Dynamo.Graph.Nodes;
 using Dynamo.Wpf.ViewModels;
 using NUnit.Framework;
+using Revit.Elements.InternalUtilities;
 using RevitServices.Elements;
 using RevitTestServices;
 
@@ -178,6 +179,56 @@ namespace RevitSystemTests
             Assert.AreEqual(pnt.X, pos.X, Epsilon, "X property does not match");
             Assert.AreEqual(pnt.Y, pos.Y, Epsilon, "Y property does not match");
             Assert.AreEqual(pnt.Z, pos.Z, Epsilon, "Z property does not match");
+
+            // Element ID of Revit face selected in DYN file
+            var elId = new Autodesk.Revit.DB.ElementId(250730);
+            var internalFamInst = famInst2.InternalElement as Autodesk.Revit.DB.FamilyInstance;
+            Assert.IsNotNull(internalFamInst);
+
+            // Verify that the Revit face selected is the hosting face of the family instance
+            Assert.AreEqual(elId, internalFamInst.HostFace.ElementId);
+
+            // Assert that there is no change in the total number of family instances in the document
+            // as the original should have been updated and no new one should be created
+            Assert.AreEqual(initialNumber, finalNumber);
+        }
+
+        [Test]
+        [TestModel(@".\Family\FamilyInstancePlacementByFace.rvt")]
+        public void ByFace_UpdateReferenceDirection_ProducesValidFamilyInstanceWithCorrectLocation()
+        {
+            string samplePath = Path.Combine(workingDirectory, @".\Family\FamilyInstancePlacementByFace.dyn");
+            string testPath = Path.GetFullPath(samplePath);
+
+            ViewModel.OpenCommand.Execute(testPath);
+            RunCurrentModel();
+
+            var initialNumber = GetAllFamilyInstances(false).Count;
+            var famInst1 = GetPreviewValue("e8dbd9fa-c0fd-4a5c-9cd8-2616f98285c8") as FamilyInstance;
+            Assert.IsNotNull(famInst1);
+
+            var transform = famInst1.InternalFamilyInstance.GetTransform();
+            XYZ[] rotationAxes;
+            TransformUtils.ExtractCoordinateAxesFromTransform(transform, out rotationAxes);
+            var initialRefDirection = rotationAxes[0].Normalize();
+
+            // Update reference direction of family instance
+            //var cbn = GetNode<CodeBlockNodeModel>("31b09d10-931b-4ac1-b2cc-7e04faf334dc");
+
+            //var command = new Dynamo.Models.DynamoModel.UpdateModelValueCommand(
+            //    Guid.Empty, cbn.GUID, "Code", "0.75");
+            //this.Model.ExecuteCommand(command);
+
+            RunCurrentModel();
+
+            var finalNumber = GetAllFamilyInstances(false).Count;
+            var famInst2 = GetPreviewValue("e8dbd9fa-c0fd-4a5c-9cd8-2616f98285c8") as FamilyInstance;
+            Assert.IsNotNull(famInst2);
+
+            // get transform of the family instance and rotation axes
+            transform = famInst2.InternalFamilyInstance.GetTransform();
+            TransformUtils.ExtractCoordinateAxesFromTransform(transform, out rotationAxes);
+            var newRefDirection = rotationAxes[0].Normalize();
 
             // Element ID of Revit face selected in DYN file
             var elId = new Autodesk.Revit.DB.ElementId(250730);

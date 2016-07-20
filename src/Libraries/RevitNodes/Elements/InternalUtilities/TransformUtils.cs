@@ -43,5 +43,17 @@ namespace Revit.Elements.InternalUtilities
          angles[0] = angles[2];
          angles[2] = t;
       }
-   }
+
+        public static void ExtractCoordinateAxesFromTransform(Transform transform, out XYZ[] axes)
+        {
+            double[] xVec = new double[3] { transform.BasisX.X, transform.BasisX.Y, transform.BasisX.Z };
+            double[] yVec = new double[3] { transform.BasisY.X, transform.BasisY.Y, transform.BasisY.Z };
+            double[] zVec = new double[3] { transform.BasisZ.X, transform.BasisZ.Y, transform.BasisZ.Z };
+
+            axes = new XYZ[3];
+            axes[0] = new XYZ(xVec[0], xVec[1], xVec[2]);
+            axes[1] = new XYZ(yVec[0], yVec[1], yVec[2]);
+            axes[2] = new XYZ(zVec[0], zVec[1], zVec[2]);
+        }
+    }
 }

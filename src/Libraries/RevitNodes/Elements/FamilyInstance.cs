@@ -25,6 +25,8 @@ namespace Revit.Elements
     public class FamilyInstance : AbstractFamilyInstance
     {
 
+        public static readonly double Tolerance = 1e-6;
+
         #region Private constructors
 
         /// <summary>
@@ -220,6 +222,7 @@ namespace Revit.Elements
                 InternalSetFamilyInstance(oldFam);
                 InternalSetFamilySymbol(fs);
                 InternalSetPosition(location);
+                InternalSetDirection(referenceDirection);
                 return;
             }
 
@@ -286,6 +289,52 @@ namespace Revit.Elements
             TransactionManager.Instance.TransactionTaskDone();
         }
 
+        private void InternalSetDirection(XYZ refDirection)
+        {
+            TransactionManager.Instance.EnsureInTransaction(Document);
+
+            var oldTransform = InternalGetTransform();
+            XYZ[] oldRotationAxes;
+            TransformUtils.ExtractCoordinateAxesFromTransform(oldTransform, out oldRotationAxes);
+
+            // local x-axis of family
+            var oldDirection = oldRotationAxes[0].Normalize();
+            // local z-axis of family
+            var faceNormal = oldRotationAxes[2].Normalize();
+
+            refDirection = refDirection.Normalize();
+
+            // If the reference direction is perpendicular to host face, skip creating family instance
+            if (refDirection.IsAlmostEqualTo(faceNormal, Tolerance) ||
+                refDirection.IsAlmostEqualTo(-faceNormal, Tolerance))
+            {
+                throw new Exception(Properties.Resources.FamilyPlacementFailed_For_ReferenceDirection);
+            }
+
+            var crossProduct = oldDirection.CrossProduct(refDirection).Normalize();
+
+            // Find angle of rotation between old and new reference directions
+            var dotProduct = oldDirection.DotProduct(refDirection);
+            var rotationAngle = Math.Acos(dotProduct)*180/Math.PI;
+
+            if (crossProduct.IsAlmostEqualTo(faceNormal, Tolerance))
+            {
+                // Rotate counter-clockwise about local +ve Z-axis of family
+                SetRotation(rotationAngle);
+            }
+            else if (crossProduct.IsAlmostEqualTo(-faceNormal, Tolerance))
+            {
+                // Rotate clockwise about local +ve Z-axis of family
+                SetRotation(-rotationAngle);
+            }
+            else
+            {
+                throw new Exception(Properties.Resources.FamilyPlacementFailed_For_ReferenceDirection);
+            }
+
+            TransactionManager.Instance.TransactionTaskDone();
+        }
+
         #endregion
 
         #region Public properties
@@ -326,6 +375,7 @@ namespace Revit.Elements
 
         #region Public static constructors
 
+
         /// <summary>
         /// Place a Revit FamilyInstance given the FamilyType (also known as the FamilySymbol in the Revit API) and its coordinates in world space
         /// </summary>
@@ -348,10 +398,10 @@ namespace Revit.Elements
         }
 
         /// <summary>
-        /// Place a Revit family instance of the given the FamilyType (also known as the FamilySymbol in the Revit API) 
+        /// Place a Revit family instance of the given FamilyType (also known as the FamilySymbol in the Revit API) 
         /// on a surface derived from a backing Revit face as reference and a line as reference for its position.
         /// 
-        /// Note: The FamilyPlacementType must be CurveBased and the input surface must be created from a Revit Face 
+        /// Note: The FamilyType must be CurveBased and the input surface must be created from a Revit Face 
         /// </summary>
         /// <param name="familyType"></param>
         /// <param name="face">Surface geometry derived from a Revit face as reference element</param>
