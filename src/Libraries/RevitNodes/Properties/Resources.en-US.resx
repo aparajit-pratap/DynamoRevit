@@ -321,4 +321,7 @@
   <data name="FamilyPlacementFailed_For_ReferenceDirection" xml:space="preserve">
     <value>The reference direction cannot be perpendicular to the host Revit face</value>
   </data>
+  <data name="InvalidFilterType" xml:space="preserve">
+    <value>FilterType is not valid.</value>
+  </data>
 </root>
