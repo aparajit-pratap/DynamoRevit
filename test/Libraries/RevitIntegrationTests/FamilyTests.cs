@@ -107,6 +107,7 @@ namespace RevitSystemTests
            Assert.AreEqual(30.0, rotationAngles[0] * 180 / System.Math.PI, Epsilon);
         }
 
+#if RC110
         [Test]
         [TestModel(@".\Family\FamilyInstancePlacementByFace.rvt")]
         public void ByFace_ProducesValidFamilyInstanceWithCorrectLocation()
@@ -192,6 +193,8 @@ namespace RevitSystemTests
             // as the original should have been updated and no new one should be created
             Assert.AreEqual(initialNumber, finalNumber);
         }
+
+
 
         [Test]
         [TestModel(@".\Family\FamilyInstancePlacementByFace.rvt")]
@@ -354,5 +357,6 @@ namespace RevitSystemTests
             // as the original should have been updated and no new one should be created
             Assert.AreEqual(initialNumber, finalNumber);
         }
+#endif
     }
 }

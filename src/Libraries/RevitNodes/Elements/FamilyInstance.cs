@@ -397,6 +397,7 @@ namespace Revit.Elements
             return new FamilyInstance(familyType.InternalFamilySymbol, point.ToXyz());
         }
 
+#if RC110
         /// <summary>
         /// Place a Revit family instance of the given FamilyType (also known as the FamilySymbol in the Revit API) 
         /// on a surface derived from a backing Revit face as reference and a line as reference for its position.
@@ -462,6 +463,7 @@ namespace Revit.Elements
             return new FamilyInstance(familyType.InternalFamilySymbol, reference.InternalReference, 
                 location.ToXyz(), referenceDirection.ToXyz());
         }
+#endif
 
         /// <summary>
         /// Place a Revit FamilyInstance given the FamilyType (also known as the FamilySymbol in the Revit API) and its coordinates in world space
