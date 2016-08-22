@@ -97,6 +97,15 @@ namespace Revit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot get base or survey point from document..
+        /// </summary>
+        internal static string CannotGetBaseOrSurveyPoint {
+            get {
+                return ResourceManager.GetString("CannotGetBaseOrSurveyPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not find cell for panel.
         /// </summary>
         internal static string CellForPanelNotFound {
@@ -237,6 +246,15 @@ namespace Revit.Properties {
         internal static string DynamoSurfaceToRevitBRepFailure {
             get {
                 return ResourceManager.GetString("DynamoSurfaceToRevitBRepFailure", resourceCulture);
+		}
+	}
+
+        /// <summary>
+        ///   Looks up a localized string similar to Element cannot be annotated.
+        /// </summary>
+        internal static string ElementCannotBeAnnotatedError {
+            get {
+                return ResourceManager.GetString("ElementCannotBeAnnotatedError", resourceCulture);
             }
         }
         
@@ -511,6 +529,15 @@ namespace Revit.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need at least two elements for a dimension..
+        /// </summary>
+        internal static string NotEnoughDataError {
+            get {
+                return ResourceManager.GetString("NotEnoughDataError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} must be a positive integer.
         /// </summary>
         internal static string NotPositiveIntegerError {
@@ -669,6 +696,15 @@ namespace Revit.Properties {
         internal static string View_ExportAsImage_Path_Invalid {
             get {
                 return ResourceManager.GetString("View_ExportAsImage_Path_Invalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View does not support annotations..
+        /// </summary>
+        internal static string ViewDoesNotSupportAnnotations {
+            get {
+                return ResourceManager.GetString("ViewDoesNotSupportAnnotations", resourceCulture);
             }
         }
         
